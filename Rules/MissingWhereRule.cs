@@ -1,5 +1,7 @@
 using SqlPerformanceAnalyzer.Interfaces;
 using SqlPerformanceAnalyzer.Models;
+using SqlPerformanceAnalyzer.Constants;
+using SqlPerformanceAnalyzer.Helpers;
 
 namespace SqlPerformanceAnalyzer.Rules;
 
@@ -7,26 +9,21 @@ public class MissingWhereRule : ISqlRule
 {
     public Issue? Analyze(string query)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        if (QueryHelper.IsEmpty(query))
             return null;
 
-        var upperQuery = query.ToUpper();
-
-        // Check if it's a SELECT query
-        if (!upperQuery.StartsWith("SELECT"))
+        if (!QueryHelper.IsSelectQuery(query))
             return null;
 
-        // Ignore COUNT queries for now
-        if (upperQuery.Contains("COUNT("))
+        if (QueryHelper.Contains(query, "COUNT("))
             return null;
 
-        // If there's no WHERE clause, return an issue
-        if (!upperQuery.Contains("WHERE"))
+        if (!QueryHelper.Contains(query, "WHERE"))
         {
             return new Issue
             {
                 Title = "Missing WHERE clause",
-                Severity = "High",
+                Severity = Severity.High,
                 Recommendation = "This query may scan the entire table. Add a WHERE clause if appropriate."
             };
         }

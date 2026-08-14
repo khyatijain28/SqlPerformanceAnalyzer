@@ -1,5 +1,7 @@
 using SqlPerformanceAnalyzer.Interfaces;
 using SqlPerformanceAnalyzer.Models;
+using SqlPerformanceAnalyzer.Constants;
+using SqlPerformanceAnalyzer.Helpers;
 
 namespace SqlPerformanceAnalyzer.Rules;
 
@@ -7,19 +9,18 @@ public class NoLockHintRule : ISqlRule
 {
     public Issue? Analyze(string query)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        if (QueryHelper.IsEmpty(query))
             return null;
 
-        var upperQuery = query.ToUpper().Trim();
-
-        bool hasNoLock = upperQuery.Contains("WITH (NOLOCK)") || upperQuery.Contains("WITH(NOLOCK)");
+        bool hasNoLock = QueryHelper.Contains(query, "WITH (NOLOCK)") ||
+                         QueryHelper.Contains(query, "WITH(NOLOCK)");
 
         if (hasNoLock)
         {
             return new Issue
             {
                 Title = "NOLOCK hint detected",
-                Severity = "Warning",
+                Severity = Severity.Warning,
                 Recommendation = "WITH (NOLOCK) allows dirty reads — your query may return uncommitted, inconsistent, " +
                                  "or phantom data. Avoid it in financial or audit-sensitive queries. " +
                                  "Consider READ COMMITTED SNAPSHOT isolation level instead."

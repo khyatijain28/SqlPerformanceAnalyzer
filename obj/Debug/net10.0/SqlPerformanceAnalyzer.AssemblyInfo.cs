@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SqlPerformanceAnalyzer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e39ece4fcd95319d268f7ee765a69b1bf9cff1ee")]
 [assembly: System.Reflection.AssemblyProductAttribute("SqlPerformanceAnalyzer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SqlPerformanceAnalyzer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

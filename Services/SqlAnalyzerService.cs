@@ -1,5 +1,6 @@
 using SqlPerformanceAnalyzer.Interfaces;
 using SqlPerformanceAnalyzer.Models;
+using SqlPerformanceAnalyzer.Constants;
 
 namespace SqlPerformanceAnalyzer.Services;
 
@@ -26,7 +27,14 @@ public class SqlAnalyzerService
             if (issue != null)
             {
                 result.Issues.Add(issue);
-                result.Score -= 10;
+
+                result.Score -= issue.Severity switch
+                {
+                    Severity.High    => 20,
+                    Severity.Warning => 10,
+                    Severity.Info    => 5,
+                    _                => 10
+                };
             }
         }
 
