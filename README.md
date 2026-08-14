@@ -11,6 +11,7 @@ Built with a **pluggable rule engine** — each rule is an independent class imp
 - Analyzes any raw SQL `SELECT` query via REST API
 - Returns a **performance score (0–100)** with detected issues
 - Each issue includes a **severity level** and **recommendation**
+- Severity-based scoring — `High` deducts more than `Warning`
 - Clean architecture: Interface → Service → Rules (Open/Closed Principle)
 - Swagger UI for easy testing
 
@@ -22,6 +23,22 @@ Built with a **pluggable rule engine** — each rule is an independent class imp
 |---|---|---|
 | `SelectStarRule` | Warning | Flags `SELECT *` — recommends specifying columns explicitly |
 | `MissingWhereRule` | High | Flags full-table SELECT queries with no WHERE clause |
+| `OrderByWithoutTopRule` | Warning | Flags `ORDER BY` without `TOP` or `FETCH` — causes full sort |
+| `NestedSelectRule` | High | Flags scalar subqueries in SELECT list — recommends JOIN or CTE |
+| `NoLockHintRule` | Warning | Flags `WITH (NOLOCK)` — warns about dirty reads |
+| `ImplicitConversionRule` | High | Flags column compared to numeric literal — causes index skip |
+
+---
+
+## Scoring Logic
+
+| Severity | Score Deduction |
+|---|---|
+| High | -20 |
+| Warning | -10 |
+| Info | -5 |
+
+Score starts at **100** and decreases per issue found. Minimum score is **0**.
 
 ---
 
@@ -38,20 +55,28 @@ Built with a **pluggable rule engine** — each rule is an independent class imp
 
 ```
 SqlPerformanceAnalyzer/
+├── Constants/
+│   └── Severity.cs                       # Severity level constants
 ├── Controllers/
-│   └── AnalyzerController.cs     # POST /api/analyzer
-├── Services/
-│   └── SqlAnalyzerService.cs     # Runs all rules, computes score
+│   └── AnalyzerController.cs             # POST /api/analyzer
+├── Helpers/
+│   └── QueryHelper.cs                    # Shared query utility methods
 ├── Interfaces/
-│   └── ISqlRule.cs               # Contract for all rules
-├── Rules/
-│   ├── SelectStarRule.cs         # Detects SELECT *
-│   └── MissingWhereRule.cs       # Detects missing WHERE clause
+│   └── ISqlRule.cs                       # Contract for all rules
 ├── Models/
-│   ├── QueryRequest.cs           # Input model
-│   ├── QueryResult.cs            # Output model (score + issues)
-│   └── Issue.cs                  # Issue detail (title, severity, recommendation)
-└── Program.cs                    # DI registration + app setup
+│   ├── QueryRequest.cs                   # Input model
+│   ├── QueryResult.cs                    # Output model (score + issues)
+│   └── Issue.cs                          # Issue detail (title, severity, recommendation)
+├── Rules/
+│   ├── SelectStarRule.cs                 # Detects SELECT *
+│   ├── MissingWhereRule.cs               # Detects missing WHERE clause
+│   ├── OrderByWithoutTopRule.cs          # Detects ORDER BY without TOP/FETCH
+│   ├── NestedSelectRule.cs               # Detects subqueries in SELECT list
+│   ├── NoLockHintRule.cs                 # Detects WITH (NOLOCK)
+│   └── ImplicitConversionRule.cs         # Detects implicit type conversions
+├── Services/
+│   └── SqlAnalyzerService.cs             # Runs all rules, computes score
+└── Program.cs                            # DI registration + app setup
 ```
 
 ---
@@ -90,7 +115,7 @@ https://localhost:{port}/swagger
 **Response:**
 ```json
 {
-  "score": 80,
+  "score": 90,
   "issues": [
     {
       "title": "Avoid SELECT *",
@@ -101,10 +126,34 @@ https://localhost:{port}/swagger
 }
 ```
 
-**Clean query example:**
+**Multiple issues example:**
 ```json
 {
-  "query": "SELECT VendorId, VendorName FROM Vendors WHERE IsActive = 1"
+  "query": "SELECT * FROM Vendors ORDER BY VendorName"
+}
+```
+```json
+{
+  "score": 80,
+  "issues": [
+    {
+      "title": "Avoid SELECT *",
+      "severity": "Warning",
+      "recommendation": "Specify only the required columns instead of using SELECT *."
+    },
+    {
+      "title": "ORDER BY without TOP or FETCH",
+      "severity": "Warning",
+      "recommendation": "Using ORDER BY without TOP or FETCH NEXT causes the database to sort the entire result set..."
+    }
+  ]
+}
+```
+
+**Clean query — score 100:**
+```json
+{
+  "query": "SELECT VendorId, VendorName FROM Vendors WHERE IsActive = '1'"
 }
 ```
 ```json
@@ -127,6 +176,9 @@ public class YourNewRule : ISqlRule
 {
     public Issue? Analyze(string query)
     {
+        if (QueryHelper.IsEmpty(query))
+            return null;
+
         // your logic here
         return null;
     }
@@ -143,4 +195,4 @@ That's it — the service picks it up automatically.
 ## Author
 
 **Khyati Jain** — .NET Developer | C# | ASP.NET MVC | SQL Server  
-[LinkedIn](https://www.linkedin.com/in/khyatijain28) · [GitHub](https://github.com/khyatijain28)
+[LinkedIn](https://www.linkedin.com/in/khyati~jain/) · [GitHub](https://github.com/khyatijain28)
