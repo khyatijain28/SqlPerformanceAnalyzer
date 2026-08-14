@@ -1,0 +1,6 @@
+@SqlPerformanceAnalyzer_HostAddress = http://localhost:5267
+
+GET {{SqlPerformanceAnalyzer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
