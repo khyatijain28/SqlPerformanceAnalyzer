@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VPNllYVDIUg=",
+  "dgSpecHash": "BDxbaFFpOHw=",
   "success": true,
-  "projectFilePath": "/Users/digvijaysingh/Documents/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
+  "projectFilePath": "/Users/digvijaysingh/Documents/GitHub/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
   "expectedPackageFiles": [
     "/Users/digvijaysingh/.nuget/packages/microsoft.aspnetcore.openapi/10.0.8/microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
     "/Users/digvijaysingh/.nuget/packages/microsoft.extensions.apidescription.server/10.0.0/microsoft.extensions.apidescription.server.10.0.0.nupkg.sha512",

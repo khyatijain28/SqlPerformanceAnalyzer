@@ -9,16 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
-
+// Register rules
 builder.Services.AddScoped<ISqlRule, SelectStarRule>();
 builder.Services.AddScoped<ISqlRule, MissingWhereRule>();
+builder.Services.AddScoped<ISqlRule, OrderByWithoutTopRule>();
+builder.Services.AddScoped<ISqlRule, NestedSelectRule>();
+builder.Services.AddScoped<ISqlRule, NoLockHintRule>();
+builder.Services.AddScoped<ISqlRule, ImplicitConversionRule>();
 
 builder.Services.AddScoped<SqlAnalyzerService>();
-
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

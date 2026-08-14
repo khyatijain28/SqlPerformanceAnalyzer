@@ -1,5 +1,7 @@
 using SqlPerformanceAnalyzer.Interfaces;
 using SqlPerformanceAnalyzer.Models;
+using SqlPerformanceAnalyzer.Constants;
+using SqlPerformanceAnalyzer.Helpers;
 
 namespace SqlPerformanceAnalyzer.Rules;
 
@@ -7,7 +9,7 @@ public class SelectStarRule : ISqlRule
 {
     public Issue? Analyze(string query)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        if (QueryHelper.IsEmpty(query))
             return null;
 
         if (query.Contains("SELECT *", StringComparison.OrdinalIgnoreCase))
@@ -15,7 +17,7 @@ public class SelectStarRule : ISqlRule
             return new Issue
             {
                 Title = "Avoid SELECT *",
-                Severity = "Warning",
+                Severity = Severity.Warning,
                 Recommendation = "Specify only the required columns instead of using SELECT *."
             };
         }

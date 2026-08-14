@@ -503,11 +503,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/digvijaysingh/Documents/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
+      "projectUniqueName": "/Users/digvijaysingh/Documents/GitHub/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
       "projectName": "SqlPerformanceAnalyzer",
-      "projectPath": "/Users/digvijaysingh/Documents/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
+      "projectPath": "/Users/digvijaysingh/Documents/GitHub/SqlPerformanceAnalyzer/SqlPerformanceAnalyzer.csproj",
       "packagesPath": "/Users/digvijaysingh/.nuget/packages/",
-      "outputPath": "/Users/digvijaysingh/Documents/SqlPerformanceAnalyzer/obj/",
+      "outputPath": "/Users/digvijaysingh/Documents/GitHub/SqlPerformanceAnalyzer/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/digvijaysingh/.nuget/NuGet/NuGet.Config"
